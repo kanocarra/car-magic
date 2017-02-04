@@ -120,7 +120,7 @@ model.fit_generator(
         validation_data=valid_generator,
         nb_val_samples=1000)
 
-model.save('model.h4')
+model.save('model.h5')
 with open('model.json', 'w', encoding='utf-8') as outfile:
     json_string = model.to_json()
     json.dump(json_string, outfile)
