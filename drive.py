@@ -1,6 +1,6 @@
+import json
 import argparse
 import base64
-import json
 
 import numpy as np
 import socketio
@@ -71,7 +71,7 @@ if __name__ == '__main__':
         #   model = model_from_json(json.loads(jfile.read()))\
         #
         # instead.
-        model = model_from_json(jfile.read())
+        model = model_from_json(json.loads(jfile.read()))
 
 
     model.compile("adam", "mse")
