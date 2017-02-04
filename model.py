@@ -73,17 +73,15 @@ model = Sequential()
 
 model.add(BatchNormalization(input_shape=shape))
 
-model.add(Convolution2D(31, 98, 24, border_mode='same'))
+model.add(Convolution2D(24, 5, 5, border_mode='valid'))
 
-model.add(Convolution2D(14, 47, 36, border_mode='same'))
+model.add(Convolution2D(36, 5, 5, border_mode='valid'))
 
-model.add(Convolution2D(5, 22, 48, border_mode='same'))
+model.add(Convolution2D(48, 5, 5, border_mode='valid'))
 
-model.add(Convolution2D(3, 20, 64, border_mode='same'))
+model.add(Convolution2D(64, 3, 3, border_mode='valid'))
 
-model.add(Convolution2D(1, 18, 64, border_mode='same'))
-
-model.add(Convolution2D(3, 20, 64, border_mode='same'))
+model.add(Convolution2D(64, 3, 3, border_mode='valid'))
 
 model.add(Flatten())
 
@@ -118,7 +116,7 @@ model.fit_generator(
         samples_per_epoch=nb_samples_per_epoch,
         nb_epoch=5,
         validation_data=valid_generator,
-        nb_val_samples=1000)
+        nb_val_samples=nb_samples_per_epoch * 0.2)
 
 
 model_json = model.to_json()
