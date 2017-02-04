@@ -19,10 +19,10 @@ log_file = 'data/driving_log.csv'
 #Create list from CSV
 column_names = ['center', 'left', 'right', 'steering', 'throttle', 'brake', 'speed']
 input_data = pandas.read_csv(log_file, names=column_names)
-center_images = input_data.center.tolist()
-right_images = input_data.right.tolist()
-left_images = input_data.left.tolist()
-steering_angle = input_data.steering.tolist()
+center_images = input_data.center.tolist()[1:]
+right_images = input_data.right.tolist()[1:]
+left_images = input_data.left.tolist()[1:]
+steering_angle = input_data.steering.tolist()[1:]
 
 
 def normalise(X_train):
