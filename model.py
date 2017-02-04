@@ -66,8 +66,6 @@ path = "data/"
 
 shape = (66, 132, 3)
 
-nb_samples_per_epoch = np.ceil(len(center_images)/5)
-
 # Create the Sequential model
 model = Sequential()
 
@@ -102,8 +100,6 @@ model.add(Activation('tanh'))
 
 model.add(Dense(1))
 
-model.add(Activation('tanh'))
-
 model.compile('adam', 'mean_squared_error')
 
 model.summary()
@@ -111,12 +107,20 @@ model.summary()
 valid_generator = validation_image_generator()
 train_generator = train_image_generator()
 
+nb_valid_samples = np.ceil((len(center_images)/5) * 0.2)
+nb_samples_per_epoch = np.ceil((len(center_images))/5) - nb_valid_samples
+
+
+print(nb_samples_per_epoch)
+print(nb_valid_samples)
+
+
 model.fit_generator(
         train_generator,
         samples_per_epoch=nb_samples_per_epoch,
         nb_epoch=5,
         validation_data=valid_generator,
-        nb_val_samples=nb_samples_per_epoch * 0.2)
+        nb_val_samples=nb_valid_samples)
 
 
 model_json = model.to_json()
