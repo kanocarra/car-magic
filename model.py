@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.image as mpimg
 from keras.models import load_model
+import json
 
 from sklearn import preprocessing
 from keras.models import Sequential
@@ -119,7 +120,10 @@ model.fit_generator(
         validation_data=valid_generator,
         nb_val_samples=1000)
 
-model.save('model.h5')
+model.save('model.h4')
+with open('model.json', 'w', encoding='utf-8') as outfile:
+    json_string = model.to_json()
+    json.dump(json_string, outfile)
 
 
 
