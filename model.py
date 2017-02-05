@@ -40,7 +40,7 @@ def train_image_generator():
     while True:
         X_train,y_train = shuffle(X_train, y_train)
         for i in range(BATCH_SIZE):
-            index = random.randint(0, len(X_train))
+            index = random.randint(0, len(X_train)-1)
             path = edit_path(X_train[index])
             cropped_image = image_aug.crop_image(mpimg.imread(path))
             resized_image = image_aug.resize_image(cropped_image)
@@ -53,12 +53,12 @@ def validation_image_generator():
 
     global X_validation, y_validation
     batch_image = np.zeros((BATCH_SIZE, 47, 200, 3))
-    batch_angle= np.zeros((BATCH_SIZE,),)
+    batch_angle = np.zeros((BATCH_SIZE,),)
 
     while True:
         X_validation,y_validation = shuffle(X_validation, y_validation)
         for i in range(BATCH_SIZE):
-            index = random.randint(0, len(X_validation))
+            index = random.randint(0, len(X_validation)-1)
             path = edit_path(X_validation[index])
             cropped_image = image_aug.crop_image(mpimg.imread(path))
             resized_image = image_aug.resize_image(cropped_image)
