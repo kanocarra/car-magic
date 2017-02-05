@@ -1,19 +1,16 @@
 import numpy as np
 import matplotlib.image as mpimg
-from keras.models import load_model
-from keras.models import model_from_json
 import image_aug
-from sklearn import preprocessing
 from keras.models import Sequential
 from keras.layers.core import Dense, Activation, Flatten
 from keras.layers.convolutional import Convolution2D
 from keras.layers.normalization import BatchNormalization
 from sklearn.utils import shuffle
-from keras.preprocessing.image import ImageDataGenerator
+from sklearn.model_selection import train_test_split
 import pandas
-import cv2
+import random
 
-BATCH_SIZE = 64
+BATCH_SIZE = 128
 
 log_file = 'data/driving_log.csv'
 
@@ -26,12 +23,7 @@ left_images = input_data.left.tolist()[1:]
 steering_angle = input_data.steering.tolist()[1:]
 shape = (47, 200, 3)
 
-
-def normalise(X_train):
-    a = -0.5
-    b = 0.5
-    X_normalized = a + (((X_train - np.min(X_train))*(b - a))/(np.max(X_train) - np.min(X_train)))
-    return X_normalized
+X_train, X_validation, y_train, y_validation = train_test_split(center_images, steering_angle, test_size=0.2, random_state=0)
 
 
 def edit_path(path):
@@ -42,12 +34,14 @@ def edit_path(path):
 
 def train_image_generator():
 
+    global X_train, y_train
     batch_features = np.zeros((BATCH_SIZE, 47, 200, 3))
     batch_labels = np.zeros((BATCH_SIZE,),)
     while True:
-        X_train,y_train = shuffle(center_images, steering_angle)
+        X_train,y_train = shuffle(X_train, y_train)
         for i in range(BATCH_SIZE):
-            path = edit_path(X_train[i])
+            index = random.randint(0, len(X_train))
+            path = edit_path(X_train[index])
             cropped_image = image_aug.crop_image(mpimg.imread(path))
             resized_image = image_aug.resize_image(cropped_image)
             batch_features[i] = resized_image
@@ -56,17 +50,22 @@ def train_image_generator():
 
 
 def validation_image_generator():
+
+    global X_validation, y_validation
     batch_features = np.zeros((BATCH_SIZE, 47, 200, 3))
     batch_labels = np.zeros((BATCH_SIZE,),)
+
     while True:
-        X_train,y_train = shuffle(center_images, steering_angle)
+        X_validation,y_validation = shuffle(X_validation, y_validation)
         for i in range(BATCH_SIZE):
-            path = edit_path(X_train[i])
+            index = random.randint(0, len(X_train))
+            path = edit_path(X_train[index])
             cropped_image = image_aug.crop_image(mpimg.imread(path))
             resized_image = image_aug.resize_image(cropped_image)
             batch_features[i] = resized_image
             batch_labels[i] = y_train[i]
         yield batch_features, batch_labels
+
 
 
 # Create the Sequential model
@@ -110,8 +109,8 @@ model.summary()
 valid_generator = validation_image_generator()
 train_generator = train_image_generator()
 
-nb_valid_samples = np.ceil((len(center_images)/5) * 0.2)
-nb_samples_per_epoch = np.ceil((len(center_images))/5) - nb_valid_samples
+nb_samples_per_epoch = 30000
+nb_valid_samples = np.ceil(nb_samples_per_epoch * 0.2)
 
 
 print(nb_samples_per_epoch)
