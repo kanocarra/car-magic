@@ -109,7 +109,7 @@ model.summary()
 valid_generator = validation_image_generator()
 train_generator = train_image_generator()
 
-nb_samples_per_epoch = 30000
+nb_samples_per_epoch = 10016
 nb_valid_samples = np.ceil(nb_samples_per_epoch * 0.2)
 
 
