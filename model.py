@@ -10,7 +10,7 @@ from sklearn.model_selection import train_test_split
 import pandas
 import random
 
-BATCH_SIZE = 128
+BATCH_SIZE = 32
 
 log_file = 'data/driving_log.csv'
 
@@ -35,8 +35,8 @@ def edit_path(path):
 def train_image_generator():
 
     global X_train, y_train
-    batch_features = np.zeros((BATCH_SIZE, 47, 200, 3))
-    batch_labels = np.zeros((BATCH_SIZE,),)
+    batch_image = np.zeros((BATCH_SIZE, 47, 200, 3))
+    batch_angle = np.zeros((BATCH_SIZE,),)
     while True:
         X_train,y_train = shuffle(X_train, y_train)
         for i in range(BATCH_SIZE):
@@ -44,27 +44,27 @@ def train_image_generator():
             path = edit_path(X_train[index])
             cropped_image = image_aug.crop_image(mpimg.imread(path))
             resized_image = image_aug.resize_image(cropped_image)
-            batch_features[i] = resized_image
-            batch_labels[i] = y_train[i]
-        yield batch_features, batch_labels
+            batch_image[i] = resized_image
+            batch_angle[i] = y_train[index]
+        yield batch_image, batch_angle
 
 
 def validation_image_generator():
 
     global X_validation, y_validation
-    batch_features = np.zeros((BATCH_SIZE, 47, 200, 3))
-    batch_labels = np.zeros((BATCH_SIZE,),)
+    batch_image = np.zeros((BATCH_SIZE, 47, 200, 3))
+    batch_angle= np.zeros((BATCH_SIZE,),)
 
     while True:
         X_validation,y_validation = shuffle(X_validation, y_validation)
         for i in range(BATCH_SIZE):
-            index = random.randint(0, len(X_train))
-            path = edit_path(X_train[index])
+            index = random.randint(0, len(X_validation))
+            path = edit_path(X_validation[index])
             cropped_image = image_aug.crop_image(mpimg.imread(path))
             resized_image = image_aug.resize_image(cropped_image)
-            batch_features[i] = resized_image
-            batch_labels[i] = y_train[i]
-        yield batch_features, batch_labels
+            batch_image[i] = resized_image
+            batch_angle[i] = y_validation[index]
+        yield batch_image, batch_angle
 
 
 
@@ -131,8 +131,3 @@ with open("model.json", "w") as json_file:
 
 model.save_weights("model.h5")
 print("Saved model to disk")
-
-
-
-
-
