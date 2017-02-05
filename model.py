@@ -24,7 +24,7 @@ center_images = input_data.center.tolist()[1:]
 right_images = input_data.right.tolist()[1:]
 left_images = input_data.left.tolist()[1:]
 steering_angle = input_data.steering.tolist()[1:]
-shape = (57, 200, 3)
+shape = (47, 200, 3)
 
 
 def normalise(X_train):
