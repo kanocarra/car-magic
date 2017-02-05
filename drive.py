@@ -1,7 +1,7 @@
 import json
 import argparse
 import base64
-import cv2
+import image_aug
 
 import numpy as np
 import socketio
@@ -26,10 +26,6 @@ app = Flask(__name__)
 model = None
 prev_image_array = None
 
-def resize_image(image):
-    resized = cv2.resize(image, (132, 66), interpolation=cv2.INTER_LINEAR)
-    return resized
-
 
 @sio.on('telemetry')
 def telemetry(sid, data):
@@ -43,8 +39,8 @@ def telemetry(sid, data):
     imgString = data["image"]
     image = Image.open(BytesIO(base64.b64decode(imgString)))
     image_array = np.asarray(image)
-    resized_image = resize_image(image_array)
-    transformed_image_array = resized_image[None, :, :, :]
+    cropped_image = image_aug.crop_image(image_array)
+    transformed_image_array = cropped_image[None, :, :, :]
     # This model currently assumes that the features of the model are just the images. Feel free to change this.
     steering_angle = float(model.predict(transformed_image_array, batch_size=1))
     # The driving model currently just outputs a constant throttle. Feel free to edit this.

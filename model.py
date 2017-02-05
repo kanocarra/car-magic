@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.image as mpimg
 from keras.models import load_model
 from keras.models import model_from_json
-
+import image_aug
 from sklearn import preprocessing
 from keras.models import Sequential
 from keras.layers.core import Dense, Activation, Flatten
@@ -24,6 +24,7 @@ center_images = input_data.center.tolist()[1:]
 right_images = input_data.right.tolist()[1:]
 left_images = input_data.left.tolist()[1:]
 steering_angle = input_data.steering.tolist()[1:]
+shape = (75, 320, 3)
 
 
 def normalise(X_train):
@@ -31,11 +32,6 @@ def normalise(X_train):
     b = 0.5
     X_normalized = a + (((X_train - np.min(X_train))*(b - a))/(np.max(X_train) - np.min(X_train)))
     return X_normalized
-
-
-def resize_image(image):
-    resized = cv2.resize(image, (132, 66), interpolation=cv2.INTER_LINEAR)
-    return resized
 
 
 def edit_path(path):
@@ -46,28 +42,30 @@ def edit_path(path):
 
 def train_image_generator():
 
-    batch_features = np.zeros((BATCH_SIZE, 66, 132, 3))
+    batch_features = np.zeros((BATCH_SIZE, 75, 320, 3))
     batch_labels = np.zeros((BATCH_SIZE,),)
     while True:
         X_train,y_train = shuffle(center_images, steering_angle)
         for i in range(BATCH_SIZE):
-            batch_features[i] = resize_image(mpimg.imread(edit_path(X_train[i])))
+            path = edit_path(X_train[i])
+            cropped_image = image_aug.crop_image(mpimg.imread(path))
+            batch_features[i] = cropped_image
             batch_labels[i] = y_train[i]
         yield batch_features, batch_labels
 
 
 def validation_image_generator():
-    batch_features = np.zeros((BATCH_SIZE, 66, 132, 3))
+    batch_features = np.zeros((BATCH_SIZE, 75, 320, 3))
     batch_labels = np.zeros((BATCH_SIZE,),)
     while True:
         X_train,y_train = shuffle(center_images, steering_angle)
         for i in range(BATCH_SIZE):
-            batch_features[i] = resize_image(mpimg.imread(edit_path(X_train[i])))
+            path = edit_path(X_train[i])
+            cropped_image = image_aug.crop_image(mpimg.imread(path))
+            batch_features[i] = cropped_image
             batch_labels[i] = y_train[i]
         yield batch_features, batch_labels
 
-
-shape = (66, 132, 3)
 
 # Create the Sequential model
 model = Sequential()
