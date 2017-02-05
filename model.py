@@ -62,7 +62,7 @@ def validation_image_generator():
     while True:
         X_train,y_train = shuffle(center_images, steering_angle)
         for i in range(BATCH_SIZE):
-            batch_features[i] = resize_image(mpimg.imread(X_train[i]))
+            batch_features[i] = resize_image(mpimg.imread(edit_path(X_train[i])))
             batch_labels[i] = y_train[i]
         yield batch_features, batch_labels
 
