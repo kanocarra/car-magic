@@ -24,7 +24,7 @@ center_images = input_data.center.tolist()[1:]
 right_images = input_data.right.tolist()[1:]
 left_images = input_data.left.tolist()[1:]
 steering_angle = input_data.steering.tolist()[1:]
-shape = (75, 320, 3)
+shape = (57, 200, 3)
 
 
 def normalise(X_train):
@@ -42,27 +42,29 @@ def edit_path(path):
 
 def train_image_generator():
 
-    batch_features = np.zeros((BATCH_SIZE, 75, 320, 3))
+    batch_features = np.zeros((BATCH_SIZE, 47, 200, 3))
     batch_labels = np.zeros((BATCH_SIZE,),)
     while True:
         X_train,y_train = shuffle(center_images, steering_angle)
         for i in range(BATCH_SIZE):
             path = edit_path(X_train[i])
             cropped_image = image_aug.crop_image(mpimg.imread(path))
-            batch_features[i] = cropped_image
+            resized_image = image_aug.resize_image(cropped_image)
+            batch_features[i] = resized_image
             batch_labels[i] = y_train[i]
         yield batch_features, batch_labels
 
 
 def validation_image_generator():
-    batch_features = np.zeros((BATCH_SIZE, 75, 320, 3))
+    batch_features = np.zeros((BATCH_SIZE, 47, 200, 3))
     batch_labels = np.zeros((BATCH_SIZE,),)
     while True:
         X_train,y_train = shuffle(center_images, steering_angle)
         for i in range(BATCH_SIZE):
             path = edit_path(X_train[i])
             cropped_image = image_aug.crop_image(mpimg.imread(path))
-            batch_features[i] = cropped_image
+            resized_image = image_aug.resize_image(cropped_image)
+            batch_features[i] = resized_image
             batch_labels[i] = y_train[i]
         yield batch_features, batch_labels
 
