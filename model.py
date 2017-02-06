@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.image as mpimg
 import image_aug
 import data_aug
+import random
 from keras.models import Sequential
 from keras.layers.core import Dense, Activation, Flatten, Dropout
 from keras.layers.convolutional import Convolution2D
@@ -44,14 +45,20 @@ def train_image_generator():
     batch_angle = np.zeros((BATCH_SIZE,),)
     while True:
         X_train,y_train = shuffle(X_train, y_train)
+        flip_probability = 0.5
         for i in range(BATCH_SIZE):
             index = random.randint(0, len(X_train)-1)
-
             path = edit_path(X_train[index])
             cropped_image = image_aug.crop_image(mpimg.imread(path))
             resized_image = image_aug.resize_image(cropped_image)
-            batch_image[i] = resized_image
-            batch_angle[i] = y_train[index]
+            prob_value = random.random()
+            if prob_value >= flip_probability:
+                flipped_image = image_aug.flip_image(resized_image)
+                batch_image[i] = flipped_image
+                batch_angle[i] = y_train[index] * -1
+            else:
+                batch_image[i] = resized_image
+                batch_angle[i] = y_train[index]
 
         yield batch_image, batch_angle
 
@@ -64,13 +71,20 @@ def validation_image_generator():
 
     while True:
         X_validation,y_validation = shuffle(X_validation, y_validation)
+        flip_probability = 0.5
         for i in range(BATCH_SIZE):
             index = random.randint(0, len(X_validation)-1)
             path = edit_path(X_validation[index])
             cropped_image = image_aug.crop_image(mpimg.imread(path))
             resized_image = image_aug.resize_image(cropped_image)
-            batch_image[i] = resized_image
-            batch_angle[i] = y_validation[index]
+            prob_value = random.random()
+            if prob_value >= flip_probability:
+                flipped_image = image_aug.flip_image(resized_image)
+                batch_image[i] = flipped_image
+                batch_angle[i] = y_validation[index] * -1
+            else:
+                batch_image[i] = resized_image
+                batch_angle[i] = y_validation[index]
         yield batch_image, batch_angle
 
 
@@ -82,15 +96,21 @@ model.add(BatchNormalization(input_shape=shape))
 
 model.add(Convolution2D(24, 5, 5, border_mode='valid'))
 
+model.add(Dropout(0.5))
+
 model.add(Convolution2D(36, 5, 5, border_mode='valid'))
+
+model.add(Dropout(0.5))
 
 model.add(Convolution2D(48, 5, 5, border_mode='valid'))
 
-model.add(Convolution2D(64, 3, 3, border_mode='valid'))
+model.add(Dropout(0.5))
 
 model.add(Convolution2D(64, 3, 3, border_mode='valid'))
 
 model.add(Dropout(0.5))
+
+model.add(Convolution2D(64, 3, 3, border_mode='valid'))
 
 model.add(Flatten())
 
@@ -119,7 +139,7 @@ model.summary()
 valid_generator = validation_image_generator()
 train_generator = train_image_generator()
 
-nb_samples_per_epoch = np.ceil(len(X_train)/BATCH_SIZE) * BATCH_SIZE
+nb_samples_per_epoch = np.ceil(len(X_train) * 1.4 /BATCH_SIZE) * BATCH_SIZE
 nb_valid_samples = np.ceil(nb_samples_per_epoch * 0.2)
 
 

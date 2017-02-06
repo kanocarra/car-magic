@@ -33,3 +33,4 @@ def normalize_data(steering_angle, center_images, right_images, left_images):
                     normalized_img.append(img_left)
 
     return normalized_img, normalized_angles
+

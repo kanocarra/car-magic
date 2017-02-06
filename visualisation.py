@@ -3,6 +3,7 @@ import pandas
 import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
 import numpy as np
+import cv2
 import matplotlib.mlab as mlab
 
 log_file = 'data/driving_log.csv'
@@ -12,7 +13,7 @@ center_images = input_data.center.tolist()
 steering_angle = input_data.steering.tolist()[1:]
 right_images = input_data.right.tolist()
 left_images = input_data.left.tolist()
-throttle = input_data.throttle.tolist()
+throttle = input_data.throttle.tolist()[1:]
 
 
 def show_data():
@@ -86,9 +87,27 @@ def normalize_data():
     show_data()
 
 
+def steering_vs_throttle():
+    plt.plot(throttle, steering_angle)
+    plt.ylabel('Throttle')
+    plt.show()
+    print("Graphed")
 
-#def steering_vs_throttle():
+
+def flip_images():
+
+    for i in range(0, 20):
+        num = random.randint(0, len(right_images))
+        image = mpimg.imread(center_images[num])
+        flipped_img = cv2.flip(image, 1)
+        flipped_angle = steering_angle[num] * -1
+        plt.figure()
+        plt.imshow(flipped_img)
+        plt.title(flipped_angle)
+        print("Done")
+
+    # for angle, img in zip(steering_angle, images):
+    #     if prob_value >= flip_probability:
 
 
-#show_data()
-normalize_data()
+flip_images()
