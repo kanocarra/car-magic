@@ -96,38 +96,33 @@ model.add(BatchNormalization(input_shape=shape))
 
 model.add(Convolution2D(24, 5, 5, border_mode='valid'))
 
-model.add(Dropout(0.5))
-
 model.add(Convolution2D(36, 5, 5, border_mode='valid'))
-
-model.add(Dropout(0.5))
 
 model.add(Convolution2D(48, 5, 5, border_mode='valid'))
 
-model.add(Dropout(0.5))
+model.add(Convolution2D(64, 3, 3, border_mode='valid'))
 
 model.add(Convolution2D(64, 3, 3, border_mode='valid'))
 
 model.add(Dropout(0.5))
 
-model.add(Convolution2D(64, 3, 3, border_mode='valid'))
+model.add(Activation('relu'))
 
 model.add(Flatten())
 
-# 2nd Layer - Add a fully connected layer
+model.add(Dense(1164))
+
+model.add(Activation('relu'))
+
 model.add(Dense(100))
 
-# 3rd Layer - Add a ReLU activation layer
-model.add(Activation('tanh'))
-
-# 4th Layer - Add a fully connected layer
 model.add(Dense(50))
-
-model.add(Activation('tanh'))
 
 model.add(Dense(10))
 
-model.add(Activation('tanh'))
+model.add(Dropout(0.5))
+
+model.add(Activation('relu'))
 
 model.add(Dense(1))
 
