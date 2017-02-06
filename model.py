@@ -110,11 +110,9 @@ model.add(Activation('relu'))
 
 model.add(Flatten())
 
-model.add(Dense(1164))
+model.add(Dense(100))
 
 model.add(Activation('relu'))
-
-model.add(Dense(100))
 
 model.add(Dense(50))
 
