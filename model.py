@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.image as mpimg
 import image_aug
+import data_aug
 from keras.models import Sequential
 from keras.layers.core import Dense, Activation, Flatten
 from keras.layers.convolutional import Convolution2D
@@ -23,7 +24,10 @@ left_images = input_data.left.tolist()[1:]
 steering_angle = input_data.steering.tolist()[1:]
 shape = (47, 200, 3)
 
-X_train, X_validation, y_train, y_validation = train_test_split(center_images, steering_angle, test_size=0.2, random_state=0)
+
+X_normalized, y_normalized = data_aug.normalize_data(steering_angle, center_images, right_images, left_images)
+
+X_train, X_validation, y_train, y_validation = train_test_split(X_normalized, y_normalized, test_size=0.2, random_state=0)
 
 
 def edit_path(path):
@@ -34,6 +38,7 @@ def edit_path(path):
 
 def train_image_generator():
 
+    probability = 0.5
     global X_train, y_train
     batch_image = np.zeros((BATCH_SIZE, 47, 200, 3))
     batch_angle = np.zeros((BATCH_SIZE,),)
@@ -41,11 +46,13 @@ def train_image_generator():
         X_train,y_train = shuffle(X_train, y_train)
         for i in range(BATCH_SIZE):
             index = random.randint(0, len(X_train)-1)
+
             path = edit_path(X_train[index])
             cropped_image = image_aug.crop_image(mpimg.imread(path))
             resized_image = image_aug.resize_image(cropped_image)
             batch_image[i] = resized_image
             batch_angle[i] = y_train[index]
+
         yield batch_image, batch_angle
 
 
@@ -109,7 +116,7 @@ model.summary()
 valid_generator = validation_image_generator()
 train_generator = train_image_generator()
 
-nb_samples_per_epoch = 10016
+nb_samples_per_epoch = np.ceil(len(X_train)/BATCH_SIZE) * BATCH_SIZE
 nb_valid_samples = np.ceil(nb_samples_per_epoch * 0.2)
 
 

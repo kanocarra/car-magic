@@ -12,11 +12,13 @@ center_images = input_data.center.tolist()
 steering_angle = input_data.steering.tolist()[1:]
 right_images = input_data.right.tolist()
 left_images = input_data.left.tolist()
+throttle = input_data.throttle.tolist()
 
 
 def show_data():
     angles = np.array(steering_angle)
-    rounded_angles = list(np.round(steering_angle, decimals=2))
+    rounded_angles = list(np.round(angles, decimals=2))
+    rounded_angles.count(0.75)
     labels = set(rounded_angles)
     totals = []
     for angle in labels:
@@ -28,7 +30,7 @@ def show_data():
 
     plt.xlabel('Steering Angle')
     plt.ylabel('Probability')
-    plt.title(r'$\mathrm{Histogram\ of\ Steering angle occurences:}\$')
+    plt.title('Histogram of Steering angle occurences:')
     plt.grid(True)
     plt.show()
     print("Plotted")
@@ -47,4 +49,46 @@ def crop_image():
         print("Done image.")
 
 
-show_data()
+def normalize_data():
+
+    global steering_angle, center_images
+    probability_drop = 0.2
+    probability_right_camera = 0.5
+    normalized_angles = []
+    normalized_img = []
+    steering_angle.count(0.75)
+    for angle, img_center, img_right, img_left in zip(steering_angle, center_images, right_images, left_images):
+        prob_value = random.random()
+        if abs(angle) < 0.01:
+            if prob_value < probability_drop:
+                normalized_angles.append(angle)
+                normalized_img.append(img_center)
+        elif not abs(angle) > 0.6:
+            prob_value = random.random()
+            normalized_angles.append(angle)
+            normalized_img.append(img_center)
+
+            prob_value = random.random()
+
+            if probability_right_camera >= prob_value:
+                prob_value = random.random()
+                if probability_right_camera >= prob_value :
+                    new_angle = angle - 0.25
+                    normalized_angles.append(new_angle)
+                    normalized_img.append(img_right)
+                else:
+                    new_angle = angle + 0.25
+                    normalized_angles.append(new_angle)
+                    normalized_img.append(img_left)
+
+    steering_angle = normalized_angles
+
+    show_data()
+
+
+
+#def steering_vs_throttle():
+
+
+#show_data()
+normalize_data()
