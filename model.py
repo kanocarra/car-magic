@@ -3,7 +3,7 @@ import matplotlib.image as mpimg
 import image_aug
 import data_aug
 from keras.models import Sequential
-from keras.layers.core import Dense, Activation, Flatten
+from keras.layers.core import Dense, Activation, Flatten, Dropout
 from keras.layers.convolutional import Convolution2D
 from keras.layers.normalization import BatchNormalization
 from sklearn.utils import shuffle
@@ -90,6 +90,8 @@ model.add(Convolution2D(64, 3, 3, border_mode='valid'))
 
 model.add(Convolution2D(64, 3, 3, border_mode='valid'))
 
+model.add(Dropout(0.5))
+
 model.add(Flatten())
 
 # 2nd Layer - Add a fully connected layer
@@ -108,6 +110,7 @@ model.add(Dense(10))
 model.add(Activation('tanh'))
 
 model.add(Dense(1))
+
 
 model.compile('adam', 'mean_squared_error')
 
