@@ -28,6 +28,8 @@ shape = (47, 200, 3)
 
 X_normalized, y_normalized = data_aug.normalize_data(steering_angle, center_images, right_images, left_images)
 
+X_train, X_validation, X_test, y_test = train_test_split(X_normalized, y_normalized, test_size=0.05)
+
 X_train, X_validation, y_train, y_validation = train_test_split(X_normalized, y_normalized, test_size=0.2, random_state=0)
 
 
@@ -88,6 +90,24 @@ def validation_image_generator():
         yield batch_image, batch_angle
 
 
+def test_image_generator():
+
+    global X_test, y_test
+    batch_image = np.zeros((BATCH_SIZE, 47, 200, 3))
+    batch_angle = np.zeros((BATCH_SIZE,),)
+
+    while True:
+        X_test,y_test = shuffle(X_test, y_test)
+        for i in range(BATCH_SIZE):
+            index = random.randint(0, len(X_test)-1)
+            path = edit_path(X_validation[index])
+            cropped_image = image_aug.crop_image(mpimg.imread(path))
+            resized_image = image_aug.resize_image(cropped_image)
+            batch_image[i] = resized_image
+            batch_angle[i] = y_test[index]
+        yield batch_image, batch_angle
+
+
 
 # Create the Sequential model
 model = Sequential()
@@ -110,8 +130,6 @@ model.add(Activation('relu'))
 
 model.add(Flatten())
 
-model.add(Activation('relu'))
-
 model.add(Dense(100))
 
 model.add(Activation('relu'))
@@ -128,20 +146,21 @@ model.add(Activation('tanh'))
 
 model.add(Dense(1))
 
+model.add(Activation('relu'))
+
 model.compile('adam', 'mean_squared_error')
 
 model.summary()
 
 valid_generator = validation_image_generator()
 train_generator = train_image_generator()
+test_generator = test_image_generator()
 
 nb_samples_per_epoch = np.ceil(len(X_train) * 1.4 /BATCH_SIZE) * BATCH_SIZE
 nb_valid_samples = np.ceil(nb_samples_per_epoch * 0.2)
 
-
 print(nb_samples_per_epoch)
 print(nb_valid_samples)
-
 
 model.fit_generator(
         train_generator,
@@ -150,10 +169,16 @@ model.fit_generator(
         validation_data=valid_generator,
         nb_val_samples=nb_valid_samples)
 
-
 model_json = model.to_json()
 with open("model.json", "w") as json_file:
     json_file.write(model_json)
 
 model.save_weights("model.h5")
 print("Saved model to disk")
+
+metrics = model.evaluate_generator(test_generator, len(X_test))
+
+for metric_i in range(len(model.metrics_names)):
+    metric_name = model.metrics_names[metric_i]
+    metric_value = metrics[metric_i]
+    print('{}: {}'.format(metric_name, metric_value))
