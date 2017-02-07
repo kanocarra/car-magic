@@ -144,6 +144,8 @@ model.add(Activation('tanh'))
 
 model.add(Dense(1))
 
+model.add(Activation('tanh'))
+
 model.compile('adam', 'mean_squared_error')
 
 model.summary()
@@ -173,8 +175,10 @@ model.save_weights("model.h5")
 print("Saved model to disk")
 
 metrics = model.evaluate_generator(test_generator, len(X_test))
-
+print(metrics)
 for metric_i in range(len(model.metrics_names)):
     metric_name = model.metrics_names[metric_i]
+    print(metric_i)
+    print(metric_name)
     metric_value = metrics[metric_i]
     print('{}: {}'.format(metric_name, metric_value))
