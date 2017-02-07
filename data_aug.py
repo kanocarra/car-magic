@@ -30,7 +30,7 @@ def normalize_data(steering_angle, center_images, right_images, left_images):
                 else:
                     new_angle = angle + 0.25
                     normalized_angles.append(new_angle)
-                    normalized_img.append(img_left)
+                    normalized_img.append(img_left)9
 
     return normalized_img, normalized_angles
 

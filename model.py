@@ -41,13 +41,12 @@ def edit_path(path):
 
 def train_image_generator():
 
-    probability = 0.5
+    flip_probability = 0.3
     global X_train, y_train
     batch_image = np.zeros((BATCH_SIZE, 47, 200, 3))
     batch_angle = np.zeros((BATCH_SIZE,),)
     while True:
         X_train,y_train = shuffle(X_train, y_train)
-        flip_probability = 0.5
         for i in range(BATCH_SIZE):
             index = random.randint(0, len(X_train)-1)
             path = edit_path(X_train[index])
@@ -112,33 +111,33 @@ def test_image_generator():
 # Create the Sequential model
 model = Sequential()
 
-model.add(BatchNormalization(input_shape=shape))
+model.add(BatchNormalization(input_shape=shape, name="batch"))
 
-model.add(Convolution2D(24, 5, 5, border_mode='valid'))
+model.add(Convolution2D(24, 5, 5, border_mode='valid', name="conv1"))
 
-model.add(Convolution2D(36, 5, 5, border_mode='valid'))
+model.add(Convolution2D(36, 5, 5, border_mode='valid', name="conv2"))
 
-model.add(Convolution2D(48, 5, 5, border_mode='valid'))
+model.add(Convolution2D(48, 5, 5, border_mode='valid', name="conv3"))
 
-model.add(Convolution2D(64, 3, 3, border_mode='valid'))
+model.add(Convolution2D(64, 3, 3, border_mode='valid', name="conv4"))
 
-model.add(Convolution2D(64, 3, 3, border_mode='valid'))
+model.add(Convolution2D(64, 3, 3, border_mode='valid', name="conv5"))
 
 model.add(Dropout(0.5))
 
+model.add(Activation('tanh', name="act1"))
+
+model.add(Flatten(name="flatten"))
+
+model.add(Dense(100, name="dense1"))
+
+model.add(Activation('tanh', name="conv3"))
+
+model.add(Dense(50, name="dense2"))
+
 model.add(Activation('tanh'))
 
-model.add(Flatten())
-
-model.add(Dense(100))
-
-model.add(Activation('tanh'))
-
-model.add(Dense(50))
-
-model.add(Activation('tanh'))
-
-model.add(Dense(10))
+model.add(Dense(10, name="dense3"))
 
 model.add(Activation('tanh'))
 
@@ -178,7 +177,4 @@ metrics = model.evaluate_generator(test_generator, len(X_test))
 print(metrics)
 for metric_i in range(len(model.metrics_names)):
     metric_name = model.metrics_names[metric_i]
-    print(metric_i)
-    print(metric_name)
-    metric_value = metrics[metric_i]
-    print('{}: {}'.format(metric_name, metric_value))
+    print('{}: {}'.format(metric_name, metrics))
