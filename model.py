@@ -28,9 +28,9 @@ shape = (47, 200, 3)
 
 X_normalized, y_normalized = data_aug.normalize_data(steering_angle, center_images, right_images, left_images)
 
-X_train, X_validation, X_test, y_test = train_test_split(X_normalized, y_normalized, test_size=0.05)
+X_data, X_test, y_data, y_test = train_test_split(X_normalized, y_normalized, test_size=0.05)
 
-X_train, X_validation, y_train, y_validation = train_test_split(X_normalized, y_normalized, test_size=0.2, random_state=0)
+X_train, X_validation, y_train, y_validation = train_test_split(X_data, y_data, test_size=0.2, random_state=0)
 
 
 def edit_path(path):
@@ -126,17 +126,17 @@ model.add(Convolution2D(64, 3, 3, border_mode='valid'))
 
 model.add(Dropout(0.5))
 
-model.add(Activation('relu'))
+model.add(Activation('tanh'))
 
 model.add(Flatten())
 
 model.add(Dense(100))
 
-model.add(Activation('relu'))
+model.add(Activation('tanh'))
 
 model.add(Dense(50))
 
-model.add(Activation('relu'))
+model.add(Activation('tanh'))
 
 model.add(Dense(10))
 
