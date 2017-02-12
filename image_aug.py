@@ -14,3 +14,7 @@ def flip_image(image):
     flipped_img = cv2.flip(image, 1)
     return flipped_img
 
+
+def convert_to_yuv(image):
+    yuv_image = cv2.cvtColor(image, cv2.COLOR_YCrCb2BGR)
+    return yuv_image

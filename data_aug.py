@@ -7,7 +7,6 @@ def normalize_data(steering_angle, center_images, right_images, left_images):
     probability_right_camera = 0.5
     normalized_angles = []
     normalized_img = []
-    steering_angle.count(0.75)
     for angle, img_center, img_right, img_left in zip(steering_angle, center_images, right_images, left_images):
         prob_value = random.random()
         if abs(angle) < 0.01:
@@ -15,7 +14,6 @@ def normalize_data(steering_angle, center_images, right_images, left_images):
                 normalized_angles.append(angle)
                 normalized_img.append(img_center)
         elif not abs(angle) > 0.6:
-            prob_value = random.random()
             normalized_angles.append(angle)
             normalized_img.append(img_center)
 
@@ -24,11 +22,11 @@ def normalize_data(steering_angle, center_images, right_images, left_images):
             if probability_right_camera >= prob_value:
                 prob_value = random.random()
                 if probability_right_camera >= prob_value :
-                    new_angle = angle - 0.15
+                    new_angle = angle - 0.2
                     normalized_angles.append(new_angle)
                     normalized_img.append(img_right)
                 else:
-                    new_angle = angle + 0.15
+                    new_angle = angle + 0.2
                     normalized_angles.append(new_angle)
                     normalized_img.append(img_left)
 

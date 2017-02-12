@@ -111,9 +111,9 @@ def test_image_generator():
 # Create the Sequential model
 model = Sequential()
 
-model.add(Lambda(lambda x: x/255 - 0.5, input_shape=shape, name='Normalization'))
+#model.add(Lambda(lambda x: x/255 - 0.5, input_shape=shape, name='Normalization'))
 
-#model.add(BatchNormalization(name="batch"))
+model.add(BatchNormalization(name="batch"))
 
 model.add(Convolution2D(24, 5, 5, border_mode='valid', name="conv1"))
 
