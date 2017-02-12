@@ -4,7 +4,7 @@ import image_aug
 import data_aug
 import random
 from keras.models import Sequential
-from keras.layers.core import Dense, Activation, Flatten, Dropout
+from keras.layers.core import Dense, Activation, Flatten, Dropout, Lambda
 from keras.layers.convolutional import Convolution2D
 from keras.layers.normalization import BatchNormalization
 from sklearn.utils import shuffle
@@ -111,7 +111,9 @@ def test_image_generator():
 # Create the Sequential model
 model = Sequential()
 
-model.add(BatchNormalization(input_shape=shape, name="batch"))
+model.add(Lambda(lambda x: x/255 - 0.5, input_shape=shape, name='Normalization'))
+
+#model.add(BatchNormalization(name="batch"))
 
 model.add(Convolution2D(24, 5, 5, border_mode='valid', name="conv1"))
 
@@ -148,6 +150,15 @@ model.add(Activation('tanh'))
 model.compile('adam', 'mean_squared_error')
 
 model.summary()
+
+model.load_weights('model.h5')
+
+top_model = Sequential()
+top_model.add(Flatten(input_shape=model.output_shape[1:]))
+top_model.add(Dense(256, activation='relu'))
+top_model.add(Dropout(0.5))
+top_model.add(Dense(1, activation='sigmoid'))
+
 
 valid_generator = validation_image_generator()
 train_generator = train_image_generator()
