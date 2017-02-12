@@ -151,13 +151,13 @@ model.compile('adam', 'mean_squared_error')
 
 model.summary()
 
-model.load_weights('model.h5')
-
-top_model = Sequential()
-top_model.add(Flatten(input_shape=model.output_shape[1:]))
-top_model.add(Dense(256, activation='relu'))
-top_model.add(Dropout(0.5))
-top_model.add(Dense(1, activation='sigmoid'))
+# model.load_weights('model.h5')
+#
+# top_model = Sequential()
+# top_model.add(Flatten(input_shape=model.output_shape[1:]))
+# top_model.add(Dense(256, activation='relu'))
+# top_model.add(Dropout(0.5))
+# top_model.add(Dense(1, activation='sigmoid'))
 
 
 valid_generator = validation_image_generator()
