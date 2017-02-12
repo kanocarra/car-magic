@@ -133,7 +133,7 @@ model.add(Flatten(name="flatten"))
 
 model.add(Dense(100, name="dense1"))
 
-model.add(Activation('tanh', name="conv3"))
+model.add(Activation('tanh', name="act2"))
 
 model.add(Dense(50, name="dense2"))
 
