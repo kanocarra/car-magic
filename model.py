@@ -49,7 +49,7 @@ def train_image_generator():
         X_train,y_train = shuffle(X_train, y_train)
         for i in range(BATCH_SIZE):
             index = random.randint(0, len(X_train)-1)
-            path = edit_path(X_train[index])
+            path = ('data/' + X_train[index]).replace(' ', '')
             cropped_image = image_aug.crop_image(mpimg.imread(path))
             resized_image = image_aug.resize_image(cropped_image)
             yuv_image = image_aug.convert_to_yuv(resized_image)
@@ -76,7 +76,7 @@ def validation_image_generator():
         flip_probability = 0.5
         for i in range(BATCH_SIZE):
             index = random.randint(0, len(X_validation)-1)
-            path = edit_path(X_validation[index])
+            path = ('data/' + X_validation[index]).replace(' ', '')
             cropped_image = image_aug.crop_image(mpimg.imread(path))
             resized_image = image_aug.resize_image(cropped_image)
             yuv_image = image_aug.convert_to_yuv(resized_image)
@@ -101,7 +101,7 @@ def test_image_generator():
         X_test,y_test = shuffle(X_test, y_test)
         for i in range(BATCH_SIZE):
             index = random.randint(0, len(X_test)-1)
-            path = edit_path(X_validation[index])
+            path = ('data/' + X_test[index]).replace(' ', '')
             cropped_image = image_aug.crop_image(mpimg.imread(path))
             resized_image = image_aug.resize_image(cropped_image)
             batch_image[i] = resized_image
