@@ -52,13 +52,14 @@ def train_image_generator():
             path = edit_path(X_train[index])
             cropped_image = image_aug.crop_image(mpimg.imread(path))
             resized_image = image_aug.resize_image(cropped_image)
+            yuv_image = image_aug.convert_to_yuv(resized_image)
             prob_value = random.random()
             if prob_value >= flip_probability:
-                flipped_image = image_aug.flip_image(resized_image)
+                flipped_image = image_aug.flip_image(yuv_image)
                 batch_image[i] = flipped_image
                 batch_angle[i] = y_train[index] * -1
             else:
-                batch_image[i] = resized_image
+                batch_image[i] = yuv_image
                 batch_angle[i] = y_train[index]
 
         yield batch_image, batch_angle
@@ -78,13 +79,14 @@ def validation_image_generator():
             path = edit_path(X_validation[index])
             cropped_image = image_aug.crop_image(mpimg.imread(path))
             resized_image = image_aug.resize_image(cropped_image)
+            yuv_image = image_aug.convert_to_yuv(resized_image)
             prob_value = random.random()
             if prob_value >= flip_probability:
-                flipped_image = image_aug.flip_image(resized_image)
+                flipped_image = image_aug.flip_image(yuv_image)
                 batch_image[i] = flipped_image
                 batch_angle[i] = y_validation[index] * -1
             else:
-                batch_image[i] = resized_image
+                batch_image[i] = yuv_image
                 batch_angle[i] = y_validation[index]
         yield batch_image, batch_angle
 
