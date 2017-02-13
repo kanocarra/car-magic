@@ -173,7 +173,7 @@ print(nb_valid_samples)
 model.fit_generator(
         train_generator,
         samples_per_epoch=nb_samples_per_epoch,
-        nb_epoch=5,
+        nb_epoch=10,
         validation_data=valid_generator,
         nb_val_samples=nb_valid_samples)
 
