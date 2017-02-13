@@ -19,7 +19,6 @@ throttle = input_data.throttle.tolist()[1:]
 def show_data():
     angles = np.array(steering_angle)
     rounded_angles = list(np.round(angles, decimals=2))
-    rounded_angles.count(0.75)
     labels = set(rounded_angles)
     totals = []
     for angle in labels:
@@ -57,9 +56,9 @@ def normalize_data():
     probability_right_camera = 0.5
     normalized_angles = []
     normalized_img = []
-    steering_angle.count(0.75)
     for angle, img_center, img_right, img_left in zip(steering_angle, center_images, right_images, left_images):
         prob_value = random.random()
+        angle = float(angle)
         if abs(angle) < 0.01:
             if prob_value < probability_drop:
                 normalized_angles.append(angle)
@@ -74,11 +73,11 @@ def normalize_data():
             if probability_right_camera >= prob_value:
                 prob_value = random.random()
                 if probability_right_camera >= prob_value :
-                    new_angle = angle - 0.25
+                    new_angle = angle - 0.2
                     normalized_angles.append(new_angle)
                     normalized_img.append(img_right)
                 else:
-                    new_angle = angle + 0.25
+                    new_angle = angle + 0.2
                     normalized_angles.append(new_angle)
                     normalized_img.append(img_left)
 
@@ -109,5 +108,4 @@ def flip_images():
     # for angle, img in zip(steering_angle, images):
     #     if prob_value >= flip_probability:
 
-
-flip_images()
+normalize_data()

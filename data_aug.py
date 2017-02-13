@@ -9,6 +9,7 @@ def normalize_data(steering_angle, center_images, right_images, left_images):
     normalized_img = []
     for angle, img_center, img_right, img_left in zip(steering_angle, center_images, right_images, left_images):
         prob_value = random.random()
+        angle = float(angle)
         if abs(angle) < 0.01:
             if prob_value < probability_drop:
                 normalized_angles.append(angle)
