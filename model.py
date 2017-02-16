@@ -49,7 +49,7 @@ def train_image_generator():
         X_train,y_train = shuffle(X_train, y_train)
         for i in range(BATCH_SIZE):
             index = random.randint(0, len(X_train)-1)
-            if X_train[index].find('kanocarra') :
+            if X_train[index].find('kanocarra') > -1 :
                 path = edit_path(X_train[index]).replace(' ', '')
             else:
                 path = ('data/' + X_train[index]).replace(' ', '')
@@ -79,7 +79,7 @@ def validation_image_generator():
         flip_probability = 0.5
         for i in range(BATCH_SIZE):
             index = random.randint(0, len(X_validation)-1)
-            if X_validation[index].find('kanocarra') :
+            if X_validation[index].find('kanocarra') > -1 :
                 path = edit_path(X_validation[index]).replace(' ', '')
             else:
                 path = ('data/' + X_validation[index]).replace(' ', '')
