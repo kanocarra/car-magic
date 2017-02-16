@@ -6,6 +6,7 @@ import random
 from keras.models import Sequential
 from keras.layers.core import Dense, Activation, Flatten, Dropout, Lambda
 from keras.layers.convolutional import Convolution2D
+from keras import optimizers
 from keras.layers.normalization import BatchNormalization
 from sklearn.utils import shuffle
 from sklearn.model_selection import train_test_split
@@ -133,8 +134,6 @@ model.add(Flatten(name="flatten"))
 
 model.add(Dense(100, name="dense1"))
 
-model.add(Dropout(0.5))
-
 model.add(Activation('tanh', name="act2"))
 
 model.add(Dense(50, name="dense2"))
@@ -148,6 +147,8 @@ model.add(Activation('tanh'))
 model.add(Dense(1))
 
 model.add(Activation('tanh'))
+
+adam = optimizers.Adam(lr=1e-5, beta_1=0.9, beta_2=0.999, epsilon=1e-08, decay=0.0)
 
 model.compile('adam', 'mean_squared_error')
 
@@ -166,7 +167,7 @@ valid_generator = validation_image_generator()
 train_generator = train_image_generator()
 test_generator = test_image_generator()
 
-nb_samples_per_epoch = np.ceil(len(X_train) * 1.4 / BATCH_SIZE) * BATCH_SIZE
+nb_samples_per_epoch = np.ceil(len(X_train) * 2 / BATCH_SIZE) * BATCH_SIZE
 nb_valid_samples = np.ceil(nb_samples_per_epoch * 0.2)
 
 print(nb_samples_per_epoch)
@@ -175,7 +176,7 @@ print(nb_valid_samples)
 model.fit_generator(
         train_generator,
         samples_per_epoch=nb_samples_per_epoch,
-        nb_epoch=10,
+        nb_epoch=5,
         validation_data=valid_generator,
         nb_val_samples=nb_valid_samples)
 
