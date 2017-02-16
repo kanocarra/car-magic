@@ -71,15 +71,13 @@ def normalize_data():
             prob_value = random.random()
 
             if probability_right_camera >= prob_value:
-                prob_value = random.random()
-                if probability_right_camera >= prob_value :
-                    new_angle = angle - 0.2
-                    normalized_angles.append(new_angle)
-                    normalized_img.append(img_right)
-                else:
-                    new_angle = angle + 0.2
-                    normalized_angles.append(new_angle)
-                    normalized_img.append(img_left)
+                new_angle = angle - 0.25
+                normalized_angles.append(new_angle)
+                normalized_img.append(img_right)
+            else:
+                new_angle = angle + 0.25
+                normalized_angles.append(new_angle)
+                normalized_img.append(img_left)
 
     steering_angle = normalized_angles
 

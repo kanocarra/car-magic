@@ -166,7 +166,7 @@ valid_generator = validation_image_generator()
 train_generator = train_image_generator()
 test_generator = test_image_generator()
 
-nb_samples_per_epoch = np.ceil(len(X_train) * 1.4 /BATCH_SIZE) * BATCH_SIZE
+nb_samples_per_epoch = np.ceil(len(X_train) * 1.4 / BATCH_SIZE) * BATCH_SIZE
 nb_valid_samples = np.ceil(nb_samples_per_epoch * 0.2)
 
 print(nb_samples_per_epoch)
