@@ -4,7 +4,7 @@ import image_aug
 import data_aug
 import random
 from keras.models import Sequential
-from keras.layers.core import Dense, Activation, Flatten, Dropout, Lambda
+from keras.layers.core import Dense, Activation, Flatten, Dropout, Lambda, SpatialDropout2D
 from keras.layers.convolutional import Convolution2D
 from keras import optimizers
 from keras.layers.normalization import BatchNormalization
@@ -12,6 +12,7 @@ from sklearn.utils import shuffle
 from sklearn.model_selection import train_test_split
 import pandas
 import random
+from keras import backend as K
 
 BATCH_SIZE = 32
 
@@ -24,7 +25,7 @@ center_images = input_data.center.tolist()[1:]
 right_images = input_data.right.tolist()[1:]
 left_images = input_data.left.tolist()[1:]
 steering_angle = input_data.steering.tolist()[1:]
-shape = (47, 200, 3)
+shape = (66, 200, 3)
 
 
 X_normalized, y_normalized = data_aug.normalize_data(steering_angle, center_images, right_images, left_images)
@@ -43,7 +44,7 @@ def train_image_generator():
 
     flip_probability = 0.3
     global X_train, y_train
-    batch_image = np.zeros((BATCH_SIZE, 47, 200, 3))
+    batch_image = np.zeros((BATCH_SIZE, 66, 200, 3))
     batch_angle = np.zeros((BATCH_SIZE,),)
     while True:
         X_train,y_train = shuffle(X_train, y_train)
@@ -71,7 +72,7 @@ def train_image_generator():
 def validation_image_generator():
 
     global X_validation, y_validation
-    batch_image = np.zeros((BATCH_SIZE, 47, 200, 3))
+    batch_image = np.zeros((BATCH_SIZE, 66, 200, 3))
     batch_angle = np.zeros((BATCH_SIZE,),)
 
     while True:
@@ -100,7 +101,7 @@ def validation_image_generator():
 def test_image_generator():
 
     global X_test, y_test
-    batch_image = np.zeros((BATCH_SIZE, 47, 200, 3))
+    batch_image = np.zeros((BATCH_SIZE, 66, 200, 3))
     batch_angle = np.zeros((BATCH_SIZE,),)
 
     while True:
@@ -119,41 +120,45 @@ def test_image_generator():
 # Create the Sequential model
 model = Sequential()
 
+print (K.image_dim_ordering())
+
 model.add(Lambda(lambda x: x/255 - 0.5, input_shape=shape, name='Normalization'))
 
-model.add(Convolution2D(24, 5, 5, border_mode='valid', name="conv1"))
+model.add(Convolution2D(24, 5, 5, border_mode='valid', name="conv1", activation='elu', init='he_normal', subsample=(2,2)))
 
-model.add(Convolution2D(36, 5, 5, border_mode='valid', name="conv2"))
+model.add(SpatialDropout2D(0.2))
 
-model.add(Convolution2D(48, 5, 5, border_mode='valid', name="conv3"))
+model.add(Convolution2D(36, 5, 5, border_mode='valid', name="conv2", activation='elu', subsample=(2,2)))
 
-model.add(Convolution2D(64, 3, 3, border_mode='valid', name="conv4"))
+model.add(SpatialDropout2D(0.2))
 
-model.add(Convolution2D(64, 3, 3, border_mode='valid', name="conv5"))
+model.add(Convolution2D(48, 5, 5, border_mode='valid', name="conv3", activation='elu', subsample=(2,2)))
 
-model.add(Dropout(0.5))
+model.add(SpatialDropout2D(0.2))
 
-model.add(Activation('tanh', name="act1"))
+model.add(Convolution2D(64, 3, 3, border_mode='valid', name="conv4", activation='elu', subsample=(1,1)))
+
+model.add(SpatialDropout2D(0.2))
+
+model.add(Convolution2D(64, 3, 3, border_mode='valid', name="conv5", activation='elu', subsample=(1,1)))
+
+model.add(SpatialDropout2D(0.2))
 
 model.add(Flatten(name="flatten"))
 
-model.add(Dense(100, name="dense1"))
+model.add(Dense(100, name="dense1", activation='elu'))
 
-model.add(Activation('tanh', name="act2"))
+model.add(Dropout(0.5))
 
-model.add(Dense(50, name="dense2"))
+model.add(Dense(50, name="dense2", activation='elu'))
 
-model.add(Activation('tanh'))
+model.add(Dropout(0.5))
 
-model.add(Dense(10, name="dense3"))
+model.add(Dense(10, name="dense3", activation='elu'))
 
-model.add(Activation('tanh'))
+model.add(Dropout(0.5))
 
 model.add(Dense(1))
-
-model.add(Activation('tanh'))
-
-adam = optimizers.Adam(lr=1e-5, beta_1=0.9, beta_2=0.999, epsilon=1e-08, decay=0.0)
 
 model.compile('adam', 'mean_squared_error')
 
