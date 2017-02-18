@@ -16,7 +16,7 @@ from keras import backend as K
 
 BATCH_SIZE = 32
 
-log_file = 'data/driving_log.csv'
+log_file = 'fine_tune_data/driving_log.csv'
 
 #Create list from CSV
 column_names = ['center', 'left', 'right', 'steering', 'throttle', 'brake', 'speed']
@@ -35,7 +35,7 @@ X_train, X_validation, y_train, y_validation = train_test_split(X_normalized, y_
 
 
 def edit_path(path):
-    index = path.find('data')
+    index = path.find('fine_tune_data')
     new_path = path[index:]
     return new_path
 
@@ -53,7 +53,7 @@ def train_image_generator():
             if X_train[index].find('kanocarra') > -1 :
                 path = edit_path(X_train[index]).replace(' ', '')
             else:
-                path = ('data/' + X_train[index]).replace(' ', '')
+                path = ('fine_tune_data/' + X_train[index]).replace(' ', '')
             cropped_image = image_aug.crop_image(mpimg.imread(path))
             resized_image = image_aug.resize_image(cropped_image)
             yuv_image = image_aug.convert_to_yuv(resized_image)
