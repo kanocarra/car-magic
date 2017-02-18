@@ -2,7 +2,6 @@ import json
 import argparse
 import base64
 import image_aug
-
 import numpy as np
 import socketio
 import eventlet
@@ -12,9 +11,7 @@ from PIL import Image
 from PIL import ImageOps
 from flask import Flask, render_template
 from io import BytesIO
-
 from keras.models import model_from_json
-from keras.preprocessing.image import ImageDataGenerator, array_to_img, img_to_array
 
 # Fix error with Keras and TensorFlow
 import tensorflow as tf
@@ -31,31 +28,35 @@ prev_angle = 0
 
 @sio.on('telemetry')
 def telemetry(sid, data):
-    global prev_angle
-    # The current steering angle of the car
-    steering_angle = data["steering_angle"]
-    # The current throttle of the car
-    throttle = data["throttle"]
-    # The current speed of the car
-    speed = data["speed"]
-    # The current image from the center camera of the car
-    imgString = data["image"]
-    image = Image.open(BytesIO(base64.b64decode(imgString)))
-    image_array = np.asarray(image)
-    cropped_image = image_aug.crop_image(image_array)
-    resized_image = image_aug.resize_image(cropped_image)
-    transformed_image_array = resized_image[None, :, :, :]
-    # This model currently assumes that the features of the model are just the images. Feel free to change this.
-    steering_angle = float(model.predict(transformed_image_array, batch_size=1))
-    # The driving model currently just outputs a constant throttle. Feel free to edit this.
-    next_angle = steering_angle * step_size_param + (1-step_size_param) * prev_angle
-    angle_range = 0.2 - 0
-    throttle_range = 0.2 - 0
-    throttle = 0.15 - (((abs(next_angle)) * throttle_range) / angle_range)
-    prev_angle = next_angle
-    print(next_angle, throttle)
-    send_control(next_angle, throttle)
+    try:
 
+        global prev_angle
+        # The current steering angle of the car
+        steering_angle = data["steering_angle"]
+        # The current throttle of the car
+        throttle = data["throttle"]
+        # The current speed of the car
+        speed = data["speed"]
+        # The current image from the center camera of the car
+        imgString = data["image"]
+        image = Image.open(BytesIO(base64.b64decode(imgString)))
+        image_array = np.asarray(image)
+        cropped_image = image_aug.crop_image(image_array)
+        resized_image = image_aug.resize_image(cropped_image)
+        yuv_image = image_aug.convert_to_yuv(resized_image)
+        transformed_image_array = yuv_image[None, :, :, :]
+        # This model currently assumes that the features of the model are just the images. Feel free to change this.
+        steering_angle = float(model.predict(transformed_image_array, batch_size=1))
+        # The driving model currently just outputs a constant throttle. Feel free to edit this.
+        next_angle = steering_angle * step_size_param + (1-step_size_param) * prev_angle
+        angle_range = 0.2 - 0
+        speed_range = 0.2
+        throttle = abs(next_angle) * -0.01 + 0.15
+        prev_angle = next_angle
+        print(next_angle, throttle)
+        send_control(next_angle, throttle)
+    except Exception as e:
+        print(e)
 
 @sio.on('connect')
 def connect(sid, environ):
@@ -83,7 +84,6 @@ if __name__ == '__main__':
         #
         # instead.
         model = model_from_json(jfile.read())
-
 
     model.compile("adam", "mse")
     weights_file = args.model.replace('json', 'h5')

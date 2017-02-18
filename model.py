@@ -83,7 +83,7 @@ def validation_image_generator():
             if X_validation[index].find('kanocarra') > -1 :
                 path = edit_path(X_validation[index]).replace(' ', '')
             else:
-                path = ('data/' + X_validation[index]).replace(' ', '')
+                path = ('fine_tune_data/' + X_validation[index]).replace(' ', '')
             cropped_image = image_aug.crop_image(mpimg.imread(path))
             resized_image = image_aug.resize_image(cropped_image)
             yuv_image = image_aug.convert_to_yuv(resized_image)
@@ -108,13 +108,12 @@ def test_image_generator():
         X_test,y_test = shuffle(X_test, y_test)
         for i in range(BATCH_SIZE):
             index = random.randint(0, len(X_test)-1)
-            path = ('data/' + X_test[index]).replace(' ', '')
+            path = ('fine_tune_data/' + X_test[index]).replace(' ', '')
             cropped_image = image_aug.crop_image(mpimg.imread(path))
             resized_image = image_aug.resize_image(cropped_image)
             batch_image[i] = resized_image
             batch_angle[i] = y_test[index]
         yield batch_image, batch_angle
-
 
 
 # Create the Sequential model
@@ -162,16 +161,9 @@ model.add(Dense(1))
 
 model.compile('adam', 'mean_squared_error')
 
+model.load_weights('model.h5')
+
 model.summary()
-
-# model.load_weights('model.h5')
-#
-# top_model = Sequential()
-# top_model.add(Flatten(input_shape=model.output_shape[1:]))
-# top_model.add(Dense(256, activation='relu'))
-# top_model.add(Dropout(0.5))
-# top_model.add(Dense(1, activation='sigmoid'))
-
 
 valid_generator = validation_image_generator()
 train_generator = train_image_generator()
