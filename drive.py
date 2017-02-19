@@ -41,19 +41,25 @@ def telemetry(sid, data):
         imgString = data["image"]
         image = Image.open(BytesIO(base64.b64decode(imgString)))
         image_array = np.asarray(image)
+
+        # Apply same augmentations as in traingin set
         cropped_image = image_aug.crop_image(image_array)
         resized_image = image_aug.resize_image(cropped_image)
         yuv_image = image_aug.convert_to_yuv(resized_image)
         transformed_image_array = yuv_image[None, :, :, :]
-        # This model currently assumes that the features of the model are just the images. Feel free to change this.
         steering_angle = float(model.predict(transformed_image_array, batch_size=1))
-        # The driving model currently just outputs a constant throttle. Feel free to edit this.
+
+        # Applies smoothing 1st degree filter to angle
         next_angle = steering_angle * step_size_param + (1-step_size_param) * prev_angle
+
+        # Get value for throttle linerally proportional to angle
         throttle = abs(next_angle) * -0.01 + 0.15
         prev_angle = next_angle
         print(next_angle, throttle)
+        # Send control
         send_control(next_angle, throttle)
 
+        # Save image for later use
         timestamp = datetime.utcnow().strftime('%Y_%m_%d_%H_%M_%S_%f')[:-3]
         image_filename = os.path.join(image_folder, timestamp)
         image.save('{}.jpg'.format(image_filename))
@@ -80,12 +86,7 @@ if __name__ == '__main__':
     help='Path to model definition json. Model weights should be on the same path.')
     args = parser.parse_args()
     with open(args.model, 'r') as jfile:
-        # NOTE: if you saved the file by calling json.dump(model.to_json(), ...)
-        # then you will have to call:
-        #
-        #   model = model_from_json(json.loads(jfile.read()))\
-        #
-        # instead.
+        # Load model
         model = model_from_json(jfile.read())
 
     model.compile("adam", "mse")
