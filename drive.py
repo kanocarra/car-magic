@@ -6,7 +6,8 @@ import numpy as np
 import socketio
 import eventlet
 import eventlet.wsgi
-import time
+from datetime import datetime
+import os
 from PIL import Image
 from PIL import ImageOps
 from flask import Flask, render_template
@@ -24,12 +25,11 @@ model = None
 prev_image_array = None
 step_size_param = 0.2
 prev_angle = 0
-
+image_folder = 'run/images'
 
 @sio.on('telemetry')
 def telemetry(sid, data):
     try:
-
         global prev_angle
         # The current steering angle of the car
         steering_angle = data["steering_angle"]
@@ -49,12 +49,15 @@ def telemetry(sid, data):
         steering_angle = float(model.predict(transformed_image_array, batch_size=1))
         # The driving model currently just outputs a constant throttle. Feel free to edit this.
         next_angle = steering_angle * step_size_param + (1-step_size_param) * prev_angle
-        angle_range = 0.2 - 0
-        speed_range = 0.2
         throttle = abs(next_angle) * -0.01 + 0.15
         prev_angle = next_angle
         print(next_angle, throttle)
         send_control(next_angle, throttle)
+
+        timestamp = datetime.utcnow().strftime('%Y_%m_%d_%H_%M_%S_%f')[:-3]
+        image_filename = os.path.join(image_folder, timestamp)
+        image.save('{}.jpg'.format(image_filename))
+
     except Exception as e:
         print(e)
 
@@ -91,6 +94,8 @@ if __name__ == '__main__':
 
     # wrap Flask application with engineio's middleware
     app = socketio.Middleware(sio, app)
+
+    print("Creating image folder at {}".format(image_folder))
 
     # deploy as an eventlet WSGI server
     eventlet.wsgi.server(eventlet.listen(('', 4567)), app)

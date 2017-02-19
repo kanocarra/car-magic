@@ -1,11 +1,14 @@
+# Collection of methods to visualise the dataset
+
 import random
 import pandas
 import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
 import numpy as np
 import cv2
-import matplotlib.mlab as mlab
 
+
+# Read in data from driving_log CSV
 log_file = 'data/driving_log.csv'
 column_names = ['center', 'left', 'right', 'steering', 'throttle', 'brake', 'speed']
 input_data = pandas.read_csv(log_file, names=column_names)
@@ -15,7 +18,7 @@ right_images = input_data.right.tolist()
 left_images = input_data.left.tolist()
 throttle = input_data.throttle.tolist()[1:]
 
-
+# Plot histogram of values in dataset
 def show_data():
     angles = np.array(steering_angle)
     rounded_angles = list(np.round(angles, decimals=2))
@@ -36,7 +39,7 @@ def show_data():
     print("Plotted")
 
 
-
+# Crops image and displays to see region of interest
 def crop_image():
     for i in range(0, 20):
         num = random.randint(0, len(right_images))
@@ -49,6 +52,7 @@ def crop_image():
         print("Done image.")
 
 
+# Normalises the data by reducing number of low angles then plots histogram of new data
 def normalize_data():
 
     global steering_angle, center_images
@@ -84,6 +88,7 @@ def normalize_data():
     show_data()
 
 
+# Prints graph of steering angle vs. throttle value
 def steering_vs_throttle():
     plt.plot(throttle, steering_angle)
     plt.ylabel('Throttle')
@@ -91,6 +96,7 @@ def steering_vs_throttle():
     print("Graphed")
 
 
+# Flips image then shows result
 def flip_images():
 
     for i in range(0, 20):
@@ -102,8 +108,3 @@ def flip_images():
         plt.imshow(flipped_img)
         plt.title(flipped_angle)
         print("Done")
-
-    # for angle, img in zip(steering_angle, images):
-    #     if prob_value >= flip_probability:
-
-normalize_data()
