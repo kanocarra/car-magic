@@ -21,59 +21,30 @@ Elu was chosen for activation through experimentation. Tanh and relu were tried 
 
 An Adam optimiser was used to optimise the model for small loss by means of mean squared error. This was chosen as it is best suited for regression models.
 
+The final structure was determined through MANY trial and error runs and continuously iterated and improved upon. 
+
 The layout was as follows:
 
-* Normalization Layer
-	* 	Normalizes pixel values between -0.5 and +0.5
-* 2D Convolution Layer
-	* 5x5 kernal
-	* 2x2 stride
-	* Depth of 24
-	* Activation of elu
-* 2D Spatial Dropout
-	* 0.5 probability of drop 
-* 2D Convolution Layer
-	* 5x5 kernal
-	* 2x2 stride
-	* Depth of 36
-	* Elu activation
-* 2D Spatial Dropout
-	* 0.5 probability of drop 
-* 2D Convolution Layer
-	* 5x5 kernal
-	* 2x2 stride
-	* Depth of 48
-	* Activation of elu
-* 2D Spatial Dropout
-	* 0.5 probability of drop 
-* 2D Convolution Layer
-	* 3x3 kernal
-	* 1x1 stride
-	* Depth of 64
-	* Activation of elu
-* 2D Spatial Dropout
-	* 0.5 probability of drop 
-* 2D Convolution Layer
-	* 3x3 kernal
-	* 1x1 stride
-	* Depth of 48
-	* Activation of elu
-* 2D Spatial Dropout
-	* 0.5 probability of drop 
-* Flatten Layer
-* Fully Connected Layer
-	* 100 neurons
-* Dropout
-	* 0.5 probability of drop 
-* Fully Connected Layer
-	* 50 neurons
-* Dropout
-	* 0.5 probability of drop 
-* Fully Connected Layer
-	* 10 neurons 
-* Dropout
-	* 0.5 probability of drop 	 
-* Fully Connected Layer
-	* 1 neuron 	
-* Adam Optimiser
-	* Mean squared error for loss function
+Layer Type | Description
+---------- | -----------
+Normalization Layer | Normalizes pixel values between -0.5 and +0.5
+2D Convolution Layer 1 | 5x5 kernal, 2x2 stride, depth of 24, elu activation
+2D Spatial Dropout | 0.5 probability of drop 
+2D Convolution Layer 2 | 5x5 kernal, 2x2 stride, depth of 36, elu activation
+2D Spatial Dropout | 0.5 probability of drop 
+2D Convolution Layer 3 | 5x5 kernal, 2x2 stride, depth of 48, elu activation
+2D Spatial Dropout | 0.5 probability of drop 
+2D Convolution Layer 4 | 3x3 kernal, 1x1 stride, depth of 64, elu activation
+2D Spatial Dropout | 0.5 probability of drop 
+2D Convolution Layer 1 | 5x5 kernal, 2x2 stride, depth of 64, elu activation
+2D Spatial Dropout | 0.5 probability of drop 
+Flatten Layer | 
+Fully Connected Layer | 100 neurons
+Dropout | 0.5 probability of drop 
+Fully Connected Layer | 50 neurons
+Dropout | 0.5 probability of drop 
+Fully Connected Layer | 10 neurons 
+Dropout | 0.5 probability of drop 	 
+Fully Connected Layer | 1 neuron 	
+Adam Optimiser | Mean squared error for loss function
+
