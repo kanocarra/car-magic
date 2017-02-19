@@ -36,7 +36,7 @@ Normalization Layer | Normalizes pixel values between -0.5 and +0.5
 2D Spatial Dropout | 0.5 probability of drop 
 2D Convolution Layer 4 | 3x3 kernal, 1x1 stride, depth of 64, elu activation
 2D Spatial Dropout | 0.5 probability of drop 
-2D Convolution Layer 1 | 5x5 kernal, 2x2 stride, depth of 64, elu activation
+2D Convolution Layer 5 | 5x5 kernal, 2x2 stride, depth of 64, elu activation
 2D Spatial Dropout | 0.5 probability of drop 
 Flatten Layer | 
 Fully Connected Layer | 100 neurons
@@ -47,4 +47,18 @@ Fully Connected Layer | 10 neurons
 Dropout | 0.5 probability of drop 	 
 Fully Connected Layer | 1 neuron 	
 Adam Optimiser | Mean squared error for loss function
+
+
+### Training Data
+
+The initial training data was the dataset provided by Udacity and then further fine-tuning was done on the simulator with an Xbox controller.
+
+The original dataset had only about 23k images and many of those were close to 0 steering angles. In order to generate a good model, the data had to be augmented to increase sample size as well as normalised to maximise performance of the model.
+
+#### Data Normalisation 
+
+There are more straight road on the training track than curves. Therefore with no normalization, the car would become biased towards driving straight and head straight into the lake! 
+
+The data was normalized by dropping low angles with a specified probability. This resulted in the following histogram:
+![Histogram](histogram.png)
 
