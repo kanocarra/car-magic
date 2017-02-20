@@ -73,7 +73,27 @@ Data augmentation was used to generate more data without having to drive around 
 
 #### Flipping Images
 
+We can simply flip the images along the vertical axis to give us a new perspective. With this, the angle associated with the image has to me mutliplied by -1.
 
+Before Flip:
+![Non flipped](non_flipped.png)
+
+After Flip
+![Flipped](flipped.png)
+
+As you can see, the curve changes from a rigth corner to a left corner and the angle becomes negative.
+
+#### Using Left and Right Camera Images
+
+THere are three caermas on the car, left, right and center. Initially only the center images were used, and then to get more data, the right and left images were included. This helped to steer the car away from the edges of the track as the angle was adjusted to bring the car back to the center. 
+
+Right image:
+
+![Right](right_image.png)
+
+Left image:
+
+![Left](left_image.png)
 
 
 
