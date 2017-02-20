@@ -11,6 +11,14 @@ The model is a Convolution Neural Network that takes in an image and predicts a 
 
 An image from the simulator is passed into the trained model and a steering angle is then sent to the car to steer around the track.
 
+### Drive the car
+
+Using the Udacity provided simulator and the drive.py file which has been edited. The car can be driven autonomously around the track by executing:
+
+```
+python drive.py model.json
+```
+
 ## Network Structure
 
 The network architecture was based off the [NVIDIA model](http://images.nvidia.com/content/tegra/automotive/images/2016/solutions/pdf/end-to-end-dl-using-px.pdf) used to train a real-life self drivng car. This model uses regression to determine the steering angle.
