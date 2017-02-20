@@ -76,10 +76,12 @@ Data augmentation was used to generate more data without having to drive around 
 We can simply flip the images along the vertical axis to give us a new perspective. With this, the angle associated with the image has to me mutliplied by -1.
 
 Before Flip:
-![Non flipped](non_flipped.png)
 
-After Flip
-![Flipped](flipped.png)
+ ![Non flipped](non_flipped.png)
+
+After Flip:
+
+ ![Flipped](flipped.png)
 
 As you can see, the curve changes from a rigth corner to a left corner and the angle becomes negative.
 
@@ -89,11 +91,11 @@ THere are three caermas on the car, left, right and center. Initially only the c
 
 Right image:
 
-![Right](right_image.png)
+ ![Right](right_image.png)
 
 Left image:
 
-![Left](left_image.png)
+ ![Left](left_image.png)
 
 
 
